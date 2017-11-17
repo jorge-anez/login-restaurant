@@ -1,6 +1,7 @@
 package org.baeldung.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.approval.UserApprovalHandler;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
@@ -23,7 +25,14 @@ import java.util.Arrays;
 @EnableAuthorizationServer
 public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private TokenStore tokenStore;
+
+    @Autowired
+    private UserApprovalHandler handler;
+
+    @Autowired
+    @Qualifier("authenticationManagerBean")
+    private AuthenticationManager authManager;
 
     @Autowired
     private DataSource dataSource;
@@ -52,7 +61,9 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore());
+        //endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore());
+        endpoints.tokenStore(tokenStore).userApprovalHandler(handler)
+                .authenticationManager(authManager);
     }
 /*
     @Bean
@@ -64,10 +75,5 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
         return defaultTokenServices;
     }
 */
-
-    @Bean
-    public TokenStore tokenStore() {
-        return new JdbcTokenStore(dataSource);
-    }
 
 }
