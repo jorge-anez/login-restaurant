@@ -1,8 +1,10 @@
 package org.baeldung.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +17,7 @@ import org.springframework.security.oauth2.provider.approval.TokenStoreUserAppro
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import javax.sql.DataSource;
 
@@ -25,22 +28,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private DataSource dataSource;
+
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http.requestMatchers()
+                .antMatchers("/login", "/oauth/authorize","/resources/static/**")
+                .and()
+                .authorizeRequests()
+                .anyRequest()
+                .authenticated()
+                .and()
+                .formLogin().loginPage("/login")
+                .permitAll().and().csrf().disable();
+
+        /*http.authorizeRequests()
                 .antMatchers("/login", "/resources/static/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
-                .and().csrf().disable();
+                .and().csrf().disable();*/
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication().dataSource(dataSource)
+        auth.parentAuthenticationManager(authenticationManager)
+        .jdbcAuthentication().dataSource(dataSource)
                 .usersByUsernameQuery("select username,password, enabled from user where username=?")
                 .authoritiesByUsernameQuery("select username, role from user_role where username=?");
         /*
@@ -52,16 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             */
     } // @formatter:on
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-
     @Bean
     public TokenStore tokenStore() {
-        return new InMemoryTokenStore();
+        return new JdbcTokenStore(dataSource);
     }
 
     @Bean

@@ -31,8 +31,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     private UserApprovalHandler handler;
 
     @Autowired
-    @Qualifier("authenticationManagerBean")
-    private AuthenticationManager authManager;
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private DataSource dataSource;
@@ -61,19 +60,9 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        //endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore());
-        endpoints.tokenStore(tokenStore).userApprovalHandler(handler)
-                .authenticationManager(authManager);
+        //endpoints.authenticationManager(authenticationManager).tokenStore(tokenStore);
+        endpoints.authenticationManager(authenticationManager)
+        .tokenStore(tokenStore).userApprovalHandler(handler);
     }
-/*
-    @Bean
-    @Primary
-    public DefaultTokenServices tokenServices() {
-        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setTokenStore(tokenStore());
-        defaultTokenServices.setSupportRefreshToken(true);
-        return defaultTokenServices;
-    }
-*/
 
 }
