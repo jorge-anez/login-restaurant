@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
@@ -31,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    //@Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -54,10 +59,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.parentAuthenticationManager(authenticationManager)
-        .jdbcAuthentication().dataSource(dataSource)
+        auth.jdbcAuthentication().dataSource(dataSource)
                 .usersByUsernameQuery("select username,password, enabled from user where username=?")
-                .authoritiesByUsernameQuery("select username, role from user_role where username=?");
+                .authoritiesByUsernameQuery("select username, role from user_role where username=?").getUserDetailsService();
         /*
         auth.parentAuthenticationManager(authenticationManager)
             .inMemoryAuthentication()
@@ -67,7 +71,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             */
     } // @formatter:on
 
+    @Override
     @Bean
+    @Primary
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    @Primary
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource);
     }
