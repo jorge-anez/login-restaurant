@@ -63,3 +63,17 @@ create table if not exists ClientDetails (
   additionalInformation VARCHAR(4096),
   autoApproveScopes VARCHAR(255)
 );
+
+
+drop table if exists user;
+create table user (
+  username VARCHAR(255) PRIMARY KEY,
+  password VARCHAR(255),
+  enabled VARCHAR(1)
+);
+
+drop table if exists user_role;
+create table user_role (
+  role VARCHAR(255) PRIMARY KEY,
+  username VARCHAR(255)
+);

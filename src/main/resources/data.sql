@@ -19,3 +19,9 @@ INSERT INTO oauth_client_details
 VALUES
 	("barClientIdPassword", "secret", "bar,read,write",
 	"password,authorization_code,refresh_token", null, null, 36000, 36000, null, true);
+
+INSERT INTO user
+(username, password, enabled) VALUES ("janez", "123", '1');
+
+INSERT INTO user_role
+(role, username) VALUES ("USER", "janez");
