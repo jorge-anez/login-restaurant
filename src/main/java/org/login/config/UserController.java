@@ -1,4 +1,4 @@
-package org.baeldung.config;
+package org.login.config;
 
 import java.security.Principal;
 

@@ -1,4 +1,4 @@
-package org.baeldung.config;
+package org.login.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +18,11 @@ import javax.sql.DataSource;
 public class PersistentInitializer {
     @Autowired
     private Environment env;
-
-    @Value("classpath:schema.sql")
+/*
+    @Value("classpath:sql/schema.sql")
     private Resource schemaScript;
 
-    @Value("classpath:data.sql")
+    @Value("classpath:sql/data.sql")
     private Resource dataScript;
 
     @Bean
@@ -39,7 +39,7 @@ public class PersistentInitializer {
         //populator.addScript(dataScript);
         return populator;
     }
-
+*/
     @Bean
     public DataSource dataSource() {
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();

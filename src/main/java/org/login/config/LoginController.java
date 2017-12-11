@@ -1,4 +1,4 @@
-package org.baeldung.config;
+package org.login.config;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

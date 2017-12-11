@@ -1,4 +1,4 @@
-package org.baeldung.config;
+package org.login.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.requestMatchers()
+        /*http.requestMatchers()
                 .antMatchers("/login", "/oauth/authorize","/resources/static/**")
                 .and()
                 .authorizeRequests()
@@ -47,14 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .formLogin().loginPage("/login")
-                .permitAll().and().csrf().disable();
+                .permitAll().and().csrf().disable();*/
 
-        /*http.authorizeRequests()
+        http.authorizeRequests()
                 .antMatchers("/login", "/resources/static/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
-                .and().csrf().disable();*/
+                .and().csrf().disable();
     }
 
     @Override
