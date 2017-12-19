@@ -29,6 +29,7 @@
                 <input type="password" class="form-control" placeholder="password" name="password">
                 <span class="input-group-addon"><span class="fa fa-lock fa-2x"></span></span>
             </div>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
         <div class="row">
             <div class="remember-me col-sm-6 col-xs-6">
